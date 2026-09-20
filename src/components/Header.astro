@@ -1,13 +1,15 @@
 ---
 // src/components/Header.astro
 import { modelos } from "../data/modelos";
+import Logo from "./Logo.astro";
 ---
 
 <header class="w-full border-b border-black">
     <div class="flex items-start justify-between px-6 py-4">
       
       <!-- Logo -->
-      <a href="/" class="text-3xl md:text-4xl font-extrabold tracking-tight font-mono">
+      <a href="/" class="w-40">
+        <Logo />
         iCars
       </a>
   

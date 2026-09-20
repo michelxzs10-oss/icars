@@ -1,0 +1,23 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = "" } = Astro.props;
+---
+
+<svg
+  class={className}
+  width="100%"
+  viewBox="0 0 680 240"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label="iCars — Archivo de modelos"
+>
+  <rect x="40" y="40" width="150" height="150" fill="#000000" />
+  <polygon points="40,190 190,190 190,120" fill="#ffffff" />
+  <rect x="40" y="40" width="150" height="150" fill="none" stroke="#000000" stroke-width="6" />
+
+  <text x="230" y="150" font-family="monospace" font-size="76" font-weight="700" fill="#000000" letter-spacing="-3">ICARS</text>
+  <rect x="234" y="168" width="420" height="14" fill="#000000" />
+  <text x="242" y="179" font-family="monospace" font-size="12" font-weight="700" fill="#ffffff" letter-spacing="3">ARCHIVO DE MODELOS</text>
+</svg>
