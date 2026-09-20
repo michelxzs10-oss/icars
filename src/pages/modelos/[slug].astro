@@ -14,8 +14,23 @@ const { modelo } = Astro.props;
 const galeriaSecundaria = modelo.galeria.filter((img) => img !== modelo.imagenPrincipal);
 const tieneCostos = modelo.specs.costoRefacciones || modelo.specs.costoMantenimiento;
 
-// Interruptor temporal
 const MOSTRAR_GALERIA = false;
+
+// Modelos relacionados: primero misma marca, luego misma década, sin repetir el actual
+const mismaDecada = (año: number) => Math.floor(año / 10) * 10;
+
+const otrosDeLaMarca = modelos.filter(
+  (m) => m.marca === modelo.marca && m.slug !== modelo.slug
+);
+
+const otrosDeLaDecada = modelos.filter(
+  (m) =>
+    m.slug !== modelo.slug &&
+    m.marca !== modelo.marca &&
+    mismaDecada(m.año) === mismaDecada(modelo.año)
+);
+
+const relacionados = [...otrosDeLaMarca, ...otrosDeLaDecada].slice(0, 3);
 ---
 
 <Layout
@@ -169,6 +184,42 @@ const MOSTRAR_GALERIA = false;
                 class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 group-hover:scale-105"
               />
             </button>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Modelos relacionados -->
+    {relacionados.length > 0 && (
+      <div class="mt-20 pt-12 border-t border-black">
+        <h2 class="text-[11px] font-mono uppercase tracking-wide text-gray-500 mb-6">
+          También te puede interesar
+        </h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {relacionados.map((rel) => (
+            <a
+              href={`/modelos/${rel.slug}`}
+              class="group relative aspect-[3/4] overflow-hidden block"
+              data-cursor="Ver"
+            >
+              <img
+                src={rel.imagenPrincipal}
+                alt={rel.nombre}
+                class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 group-hover:scale-105"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-transparent
+                       opacity-0 group-hover:opacity-100 transition-opacity duration-500
+                       flex items-end p-3"
+              >
+                <div class="text-white font-mono">
+                  <span class="block text-xs uppercase tracking-wide">{rel.nombre}</span>
+                  <span class="block text-[10px] text-gray-300 uppercase tracking-wide">
+                    {rel.marca} — {rel.año}
+                  </span>
+                </div>
+              </div>
+            </a>
           ))}
         </div>
       </div>

@@ -1,0 +1,27 @@
+---
+import { modelos } from "../data/modelos";
+
+const slugs = modelos.map((m) => m.slug);
+---
+
+<button
+  id="random-btn"
+  type="button"
+  data-cursor="Ir"
+  data-slugs={JSON.stringify(slugs)}
+  class="text-[11px] font-mono uppercase tracking-wide text-black bg-transparent border-0 cursor-pointer hover:opacity-60 transition-opacity p-0"
+>
+  Sorpréndeme
+</button>
+
+<script>
+  const btn = document.getElementById("random-btn");
+
+  btn?.addEventListener("click", () => {
+    const slugs = JSON.parse(btn.getAttribute("data-slugs") || "[]");
+    if (slugs.length === 0) return;
+
+    const randomSlug = slugs[Math.floor(Math.random() * slugs.length)];
+    window.location.href = `/modelos/${randomSlug}`;
+  });
+</script>

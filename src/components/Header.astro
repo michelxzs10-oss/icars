@@ -1,73 +1,122 @@
 ---
-// src/components/Header.astro
 import { modelos } from "../data/modelos";
-import Logo from "./Logo.astro";
+import RandomButton from "./RandomButton.astro";
 ---
 
-<header class="w-full border-b border-black">
-    <div class="flex items-start justify-between px-6 py-4">
-      
-      <!-- Logo -->
-      <a href="/" class="w-40">
-        <Logo />
-        iCars
-      </a>
-  
-      <!-- Bloques de la derecha -->
-      <nav class="flex gap-10 text-[11px] font-mono uppercase tracking-wide leading-tight">
-        
-        <div class="flex flex-col">
-          <a href="/" class="hover:opacity-60 transition-opacity">Home</a>
-          <a href="/marcas" class="hover:opacity-60 transition-opacity">Marcas [{modelos.length}]</a>
-        </div>
-  
-        <div class="flex flex-col">
-          <a href="/About" class="hover:opacity-60 transition-opacity">About</a>
-        
-        </div>
-  
-        <div class="flex flex-col text-right">
-          <span id="clock">00:00:00 GMT-6</span>
-          <span>Mexico, CDMX</span>
-        </div>
-  
-      </nav>
-    </div>
-  </header>
-  
-  <script>
-    function updateClock() {
-      const el = document.getElementById("clock");
-      if (!el) return;
-  
-      const now = new Date();
-      // Ajusta el timeZone según la ciudad/zona que quieras mostrar
-      const timeStr = now.toLocaleTimeString("en-GB", {
-        timeZone: "America/Mexico_City",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      });
-  
-      el.textContent = `${timeStr} GMT-6`;
-    }
-  
-    updateClock();
-    setInterval(updateClock, 1000);
-  </script>
+<header class="w-full border-b border-black relative z-40 bg-white">
+  <div class="flex items-start justify-between px-6 py-4">
 
+    <a href="/" class="text-3xl md:text-4xl font-extrabold tracking-tight font-mono">
+      iCars
+    </a>
 
-  <style>
-    nav a {
-      color: inherit;
-      text-decoration: none;
-    }
-  
-    nav a:visited {
-      color: inherit;
-    }
-  
-    nav a:hover {
-      opacity: 0.6;
-    }
-  </style>
+    <!-- Nav de escritorio -->
+    <nav class="hidden md:flex gap-10 text-[11px] font-mono uppercase tracking-wide leading-tight">
+      <div class="flex flex-col">
+        <a href="/" class="text-black no-underline hover:opacity-60 transition-opacity">Home</a>
+        <a href="/marcas" class="text-black no-underline hover:opacity-60 transition-opacity">Marcas [{modelos.length}]</a>
+      </div>
+
+      <div class="flex flex-col">
+        <a href="/about" class="text-black no-underline hover:opacity-60 transition-opacity">About</a>
+      </div>
+
+      <div class="flex flex-col justify-center">
+        <RandomButton />
+      </div>
+
+      <div class="flex flex-col text-right">
+        <span id="clock">00:00:00 GMT-6</span>
+        <span>Mexico, CDMX</span>
+      </div>
+    </nav>
+
+    <!-- Botón hamburguesa (solo móvil) -->
+    <button
+      id="menu-toggle"
+      type="button"
+      aria-label="Abrir menú"
+      aria-expanded="false"
+      class="md:hidden flex flex-col justify-center gap-1.5 w-8 h-8 bg-transparent border-0 cursor-pointer p-0"
+    >
+      <span class="menu-line block w-8 h-0.5 bg-black transition-transform duration-300"></span>
+      <span class="menu-line block w-8 h-0.5 bg-black transition-opacity duration-300"></span>
+      <span class="menu-line block w-8 h-0.5 bg-black transition-transform duration-300"></span>
+    </button>
+  </div>
+
+  <!-- Menú móvil a pantalla completa -->
+  <div
+    id="mobile-menu"
+    class="md:hidden fixed inset-0 top-[73px] bg-white z-30 opacity-0 pointer-events-none -translate-y-4 transition-all duration-300"
+  >
+    <nav class="flex flex-col gap-6 px-6 py-10 text-lg font-mono uppercase tracking-wide">
+      <a href="/" class="text-black no-underline border-b border-black pb-4">Home</a>
+      <a href="/marcas" class="text-black no-underline border-b border-black pb-4">Marcas [{modelos.length}]</a>
+      <a href="/about" class="text-black no-underline border-b border-black pb-4">About</a>
+      <a href="/contact" class="text-black no-underline border-b border-black pb-4">Contact</a>
+      <div class="pt-2">
+        <RandomButton />
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  function updateClock() {
+    const el = document.getElementById("clock");
+    if (!el) return;
+
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString("en-GB", {
+      timeZone: "America/Mexico_City",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+
+    el.textContent = `${timeStr} GMT-6`;
+  }
+
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  const toggle = document.getElementById("menu-toggle");
+  const menu = document.getElementById("mobile-menu");
+  const lines = document.querySelectorAll(".menu-line");
+  let isOpen = false;
+
+  function openMenu() {
+    isOpen = true;
+    menu?.classList.remove("opacity-0", "pointer-events-none", "-translate-y-4");
+    toggle?.setAttribute("aria-expanded", "true");
+    lines[0]?.classList.add("rotate-45", "translate-y-2");
+    lines[1]?.classList.add("opacity-0");
+    lines[2]?.classList.add("-rotate-45", "-translate-y-2");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeMenu() {
+    isOpen = false;
+    menu?.classList.add("opacity-0", "pointer-events-none", "-translate-y-4");
+    toggle?.setAttribute("aria-expanded", "false");
+    lines[0]?.classList.remove("rotate-45", "translate-y-2");
+    lines[1]?.classList.remove("opacity-0");
+    lines[2]?.classList.remove("-rotate-45", "-translate-y-2");
+    document.body.style.overflow = "";
+  }
+
+  toggle?.addEventListener("click", () => {
+    isOpen ? closeMenu() : openMenu();
+  });
+
+  // Cierra el menú al hacer clic en un link
+  menu?.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", closeMenu);
+  });
+
+  // Cierra el menú si la ventana crece a tamaño escritorio
+  window.addEventListener("resize", () => {
+    if (window.innerWidth >= 768 && isOpen) closeMenu();
+  });
+</script>
