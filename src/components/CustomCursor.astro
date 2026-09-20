@@ -1,0 +1,107 @@
+---
+// src/components/CustomCursor.astro
+---
+
+<div id="cursor-dot" class="cursor-dot"></div>
+<div id="cursor-outline" class="cursor-outline">
+  <span id="cursor-text" class="cursor-text"></span>
+</div>
+
+<style>
+  .cursor-dot {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    background: black;
+  }
+
+  .cursor-outline {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: width 0.25s ease, height 0.25s ease, background 0.25s ease;
+  }
+
+  .cursor-outline.hover {
+    width: 30px;
+    height: 30px;
+    background: black;
+  }
+
+  .cursor-text {
+    color: white;
+    font-family: monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .cursor-outline.hover .cursor-text {
+    opacity: 1;
+  }
+
+  /* Oculta el cursor nativo en pantallas grandes */
+  @media (min-width: 768px) {
+    body {
+      cursor: none;
+    }
+  }
+</style>
+
+<script>
+  const dot = document.getElementById("cursor-dot");
+  const outline = document.getElementById("cursor-outline");
+  const cursorText = document.getElementById("cursor-text");
+
+  let mouseX = 0, mouseY = 0;
+  let outlineX = 0, outlineY = 0;
+
+  window.addEventListener("mousemove", (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    dot!.style.left = `${mouseX}px`;
+    dot!.style.top = `${mouseY}px`;
+  });
+
+  // El outline sigue con un poco de retraso (efecto "lag")
+  function animateOutline() {
+    outlineX += (mouseX - outlineX) * 0.15;
+    outlineY += (mouseY - outlineY) * 0.15;
+    outline!.style.left = `${outlineX}px`;
+    outline!.style.top = `${outlineY}px`;
+    requestAnimationFrame(animateOutline);
+  }
+  animateOutline();
+
+  // Delegación de eventos: detecta hover incluso en elementos agregados después
+  document.addEventListener("mouseover", (e) => {
+    const target = (e.target as HTMLElement).closest("[data-cursor], a, button");
+    if (!target) return;
+    outline?.classList.add("hover");
+    if (cursorText) cursorText.textContent = target.getAttribute("data-cursor") || "";
+  });
+
+  document.addEventListener("mouseout", (e) => {
+    const target = (e.target as HTMLElement).closest("[data-cursor], a, button");
+    if (!target) return;
+    outline?.classList.remove("hover");
+    if (cursorText) cursorText.textContent = "";
+  });
+</script>

@@ -1,0 +1,51 @@
+---
+// src/components/Loader.astro
+---
+
+<div id="loader" class="fixed inset-0 z-[9999] bg-black flex items-center justify-center">
+    <h1
+      id="loader-text"
+      class="text-white font-mono text-2xl md:text-4xl tracking-widest uppercase opacity-0"
+    >
+      iCars Works
+    </h1>
+  </div>
+  
+  <style>
+    #loader {
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+  
+    #loader.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+  
+    #loader-text {
+      transition: opacity 1.2s ease;
+    }
+  
+    #loader-text.show {
+      opacity: 1;
+    }
+  </style>
+  
+  <script>
+    const loader = document.getElementById("loader");
+    const text = document.getElementById("loader-text");
+  
+    // Espera un frame para que la transición de texto se note
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        text?.classList.add("show");
+      }, 100);
+    });
+  
+    // Cuando la página termine de cargar, espera un momento y oculta el loader
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        loader?.classList.add("hide");
+      }, 1800); // tiempo total que se muestra el loader antes de desaparecer
+    });
+  </script>

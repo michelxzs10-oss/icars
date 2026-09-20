@@ -1,0 +1,284 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Rating from "../../components/Rating.astro";
+import { modelos } from "../../data/modelos";
+
+export function getStaticPaths() {
+  return modelos.map((modelo) => ({
+    params: { slug: modelo.slug },
+    props: { modelo },
+  }));
+}
+
+const { modelo } = Astro.props;
+const galeriaSecundaria = modelo.galeria.filter((img) => img !== modelo.imagenPrincipal);
+const tieneCostos = modelo.specs.costoRefacciones || modelo.specs.costoMantenimiento;
+
+// Interruptor temporal
+const MOSTRAR_GALERIA = false;
+---
+
+<Layout
+  title={`${modelo.nombre} — iCars`}
+  description={`${modelo.descripcion} Ficha técnica completa: ${modelo.specs.motor}, ${modelo.specs.potencia}.`}
+  image={modelo.imagenPrincipal}
+>
+  <article class="px-6 py-12 max-w-5xl mx-auto">
+
+    <!-- Breadcrumb -->
+    <nav class="text-[11px] font-mono uppercase tracking-wide text-gray-500 mb-8">
+      <a href="/" class="hover:text-black transition-colors">Inicio</a>
+      <span class="mx-2">/</span>
+      <a href="/marcas" class="hover:text-black transition-colors">Marcas</a>
+      <span class="mx-2">/</span>
+      <span class="text-black">{modelo.nombre}</span>
+    </nav>
+
+    <div class="grid md:grid-cols-2 gap-10">
+
+      <!-- Imagen principal -->
+      <div class="aspect-[3/4] overflow-hidden">
+        <img
+          src={modelo.imagenPrincipal}
+          alt={modelo.nombre}
+          class="w-full h-full object-cover"
+        />
+      </div>
+
+      <!-- Info -->
+      <div>
+        <span class="text-[11px] font-mono uppercase tracking-wide text-gray-500">
+          {modelo.marca} — {modelo.año}
+        </span>
+        <h1 class="text-4xl font-extrabold tracking-tight mt-1 mb-6">
+          {modelo.nombre}
+        </h1>
+
+        <p class="text-gray-700 leading-relaxed mb-8">
+          {modelo.descripcion}
+        </p>
+
+        <!-- Specs -->
+        <div class="border-t border-black pt-6">
+          <h2 class="text-[11px] font-mono uppercase tracking-wide text-gray-500 mb-4">
+            Ficha técnica
+          </h2>
+          <dl class="grid grid-cols-2 gap-y-3 text-sm font-mono">
+            {modelo.specs.motor && (
+              <>
+                <dt class="text-gray-500 uppercase">Motor</dt>
+                <dd>{modelo.specs.motor}</dd>
+              </>
+            )}
+            {modelo.specs.potencia && (
+              <>
+                <dt class="text-gray-500 uppercase">Potencia</dt>
+                <dd>{modelo.specs.potencia}</dd>
+              </>
+            )}
+            {modelo.specs.torque && (
+              <>
+                <dt class="text-gray-500 uppercase">Torque</dt>
+                <dd>{modelo.specs.torque}</dd>
+              </>
+            )}
+            {modelo.specs.transmision && (
+              <>
+                <dt class="text-gray-500 uppercase">Transmisión</dt>
+                <dd>{modelo.specs.transmision}</dd>
+              </>
+            )}
+            {modelo.specs.traccion && (
+              <>
+                <dt class="text-gray-500 uppercase">Tracción</dt>
+                <dd>{modelo.specs.traccion}</dd>
+              </>
+            )}
+            {modelo.specs.tipo && (
+              <>
+                <dt class="text-gray-500 uppercase">Tipo</dt>
+                <dd>{modelo.specs.tipo}</dd>
+              </>
+            )}
+            {modelo.specs.aceleracion && (
+              <>
+                <dt class="text-gray-500 uppercase">0-100 km/h</dt>
+                <dd>{modelo.specs.aceleracion}</dd>
+              </>
+            )}
+            {modelo.specs.velocidadMaxima && (
+              <>
+                <dt class="text-gray-500 uppercase">Vel. máxima</dt>
+                <dd>{modelo.specs.velocidadMaxima}</dd>
+              </>
+            )}
+            {modelo.specs.consumo && (
+              <>
+                <dt class="text-gray-500 uppercase">Consumo</dt>
+                <dd>{modelo.specs.consumo}</dd>
+              </>
+            )}
+          </dl>
+        </div>
+
+        <!-- Costos estimados -->
+        {tieneCostos && (
+          <div class="border-t border-black pt-6 mt-6">
+            <h2 class="text-[11px] font-mono uppercase tracking-wide text-gray-500 mb-4">
+              Costos estimados
+            </h2>
+            <div class="space-y-4 text-sm">
+              {modelo.specs.costoRefacciones && (
+                <div>
+                  <dt class="text-gray-500 uppercase text-[11px] font-mono mb-1">Refacciones</dt>
+                  <dd class="text-gray-700 leading-relaxed">{modelo.specs.costoRefacciones}</dd>
+                </div>
+              )}
+              {modelo.specs.costoMantenimiento && (
+                <div>
+                  <dt class="text-gray-500 uppercase text-[11px] font-mono mb-1">Mantenimiento</dt>
+                  <dd class="text-gray-700 leading-relaxed">{modelo.specs.costoMantenimiento}</dd>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        <!-- Confiabilidad -->
+        <Rating slug={modelo.slug} />
+      </div>
+    </div>
+
+    <!-- Galería adicional -->
+    {MOSTRAR_GALERIA && galeriaSecundaria.length > 0 && (
+      <div class="mt-20 pt-12 border-t border-black">
+        <h2 class="text-[11px] font-mono uppercase tracking-wide text-gray-500 mb-6">
+          Galería
+        </h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-2" id="galeria-grid">
+          {galeriaSecundaria.map((img, i) => (
+            <button
+              type="button"
+              class="aspect-square overflow-hidden group cursor-pointer border-0 p-0"
+              data-cursor="Ver"
+              data-lightbox-index={i}
+            >
+              <img
+                src={img}
+                alt={`${modelo.nombre} — foto ${i + 1}`}
+                class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 group-hover:scale-105"
+              />
+            </button>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Volver -->
+    <div class="mt-16">
+      <a
+        href="/"
+        data-cursor="Volver"
+        class="text-[11px] font-mono uppercase tracking-wide text-black no-underline hover:opacity-60 transition-opacity"
+      >
+        ← Volver al inicio
+      </a>
+    </div>
+
+  </article>
+
+  <!-- Lightbox -->
+  {MOSTRAR_GALERIA && galeriaSecundaria.length > 0 && (
+    <div
+      id="lightbox"
+      class="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300"
+    >
+      <button
+        id="lightbox-close"
+        class="absolute top-6 right-6 text-white text-[11px] font-mono uppercase tracking-wide hover:opacity-60 transition-opacity"
+        aria-label="Cerrar"
+      >
+        Cerrar ✕
+      </button>
+
+      <button
+        id="lightbox-prev"
+        class="absolute left-4 md:left-8 text-white text-2xl hover:opacity-60 transition-opacity"
+        aria-label="Anterior"
+      >
+        ←
+      </button>
+
+      <img
+        id="lightbox-img"
+        src=""
+        alt=""
+        class="max-w-[90vw] max-h-[85vh] object-contain"
+      />
+
+      <button
+        id="lightbox-next"
+        class="absolute right-4 md:right-8 text-white text-2xl hover:opacity-60 transition-opacity"
+        aria-label="Siguiente"
+      >
+        →
+      </button>
+    </div>
+
+    <script define:vars={{ galeria: galeriaSecundaria, nombre: modelo.nombre }}>
+      const lightbox = document.getElementById("lightbox");
+      const lightboxImg = document.getElementById("lightbox-img");
+      const closeBtn = document.getElementById("lightbox-close");
+      const prevBtn = document.getElementById("lightbox-prev");
+      const nextBtn = document.getElementById("lightbox-next");
+      const buttons = document.querySelectorAll("[data-lightbox-index]");
+
+      let currentIndex = 0;
+
+      function openLightbox(index) {
+        currentIndex = index;
+        lightboxImg.src = galeria[currentIndex];
+        lightboxImg.alt = `${nombre} — foto ${currentIndex + 1}`;
+        lightbox.classList.remove("opacity-0", "pointer-events-none");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeLightbox() {
+        lightbox.classList.add("opacity-0", "pointer-events-none");
+        document.body.style.overflow = "";
+      }
+
+      function showNext() {
+        currentIndex = (currentIndex + 1) % galeria.length;
+        lightboxImg.src = galeria[currentIndex];
+      }
+
+      function showPrev() {
+        currentIndex = (currentIndex - 1 + galeria.length) % galeria.length;
+        lightboxImg.src = galeria[currentIndex];
+      }
+
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const index = parseInt(btn.getAttribute("data-lightbox-index"), 10);
+          openLightbox(index);
+        });
+      });
+
+      closeBtn.addEventListener("click", closeLightbox);
+      nextBtn.addEventListener("click", showNext);
+      prevBtn.addEventListener("click", showPrev);
+
+      lightbox.addEventListener("click", (e) => {
+        if (e.target === lightbox) closeLightbox();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (lightbox.classList.contains("pointer-events-none")) return;
+        if (e.key === "Escape") closeLightbox();
+        if (e.key === "ArrowRight") showNext();
+        if (e.key === "ArrowLeft") showPrev();
+      });
+    </script>
+  )}
+</Layout>

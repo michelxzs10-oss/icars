@@ -1,0 +1,37 @@
+---
+import Loader from "../components/Loader.astro";
+import Header from "../components/Header.astro";
+import CustomCursor from "../components/CustomCursor.astro";
+import Footer from "../components/Footer.astro";
+import Seo from "../components/Seo.astro";
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const {
+  title = "iCars — Archivo de modelos automotrices",
+  description = "Archivo visual y técnico de modelos de autos, desde clásicos de culto hasta hot hatches olvidados, con ficha técnica y contexto histórico.",
+  image,
+} = Astro.props;
+---
+
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <Seo title={title} description={description} image={image} />
+  </head>
+  <body class="bg-white text-black flex flex-col min-h-screen">
+    <Loader />
+    <Header />
+    <CustomCursor />
+    <main class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

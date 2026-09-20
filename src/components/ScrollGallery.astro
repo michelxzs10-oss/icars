@@ -1,0 +1,65 @@
+---
+import { modelos } from "../data/modelos";
+const imagenesScroll = modelos.map((m) => ({ src: m.imagenPrincipal, slug: m.slug, nombre: m.nombre }));
+---
+
+<section class="relative h-[900vh] bg-white">
+  <div class="sticky top-0 h-screen overflow-hidden flex items-center" style="perspective: 1900px;">
+    <div id="scroll-track" class="flex gap-6 pl-[10vw] will-change-transform">
+      {imagenesScroll.map((img) => (
+      <a
+        
+          href={`/modelos/${img.slug}`}
+          class="scroll-card flex-shrink-0 w-[280px] h-[380px] overflow-hidden block"
+          data-cursor="Ver"
+        >
+          <img
+            src={img.src}
+            alt={img.nombre}
+            class="w-full h-full object-cover"
+          />
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .scroll-card {
+    transform: rotateY(-38deg) rotateX(3deg);
+    transform-style: preserve-3d;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+    transition: transform 0.4s ease;
+  }
+
+  .scroll-card:hover {
+    transform: rotateY(-20deg) rotateX(0deg) scale(1.04);
+  }
+</style>
+
+<script>
+  const section = document.querySelector("section.relative.h-\\[900vh\\]") as HTMLElement;
+  const track = document.getElementById("scroll-track");
+
+  if (section && track) {
+    function updateScrollPosition() {
+      const rect = section.getBoundingClientRect();
+      const sectionHeight = section.offsetHeight - window.innerHeight;
+
+      // progreso de 0 a 1 mientras la sección está en pantalla
+      const progress = Math.min(
+        Math.max(-rect.top / sectionHeight, 0),
+        1
+      );
+
+      const trackWidth = track!.scrollWidth - window.innerWidth;
+      const translateX = -progress * trackWidth;
+
+      track!.style.transform = `translateX(${translateX}px)`;
+    }
+
+    window.addEventListener("scroll", updateScrollPosition, { passive: true });
+    window.addEventListener("resize", updateScrollPosition);
+    updateScrollPosition();
+  }
+</script>

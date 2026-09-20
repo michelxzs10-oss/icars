@@ -1,0 +1,36 @@
+---
+// src/components/FeaturedModel.astro
+import { modelos } from "../data/modelos";
+
+// Usa el marcado como destacado, o si no hay ninguno, el primero de la lista
+const modelo = modelos.find((m) => m.destacado) ?? modelos[0];
+---
+
+<section class="grid md:grid-cols-2 gap-0 border-b border-black">
+  <div class="aspect-[4/3] md:aspect-auto overflow-hidden order-2 md:order-1">
+    <img
+      src={modelo.imagenPrincipal}
+      alt={modelo.nombre}
+      class="w-full h-full object-cover"
+    />
+  </div>
+
+  <div class="flex flex-col justify-center px-6 py-10 md:px-12 order-1 md:order-2">
+    <span class="text-[11px] font-mono uppercase tracking-wide text-gray-500 mb-2">
+      Modelo destacado — {modelo.marca} — {modelo.año}
+    </span>
+    <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight mb-4">
+      {modelo.nombre}
+    </h2>
+    <p class="text-gray-700 leading-relaxed mb-6 max-w-md">
+      {modelo.descripcion}
+    </p>
+    <a
+      href={`/modelos/${modelo.slug}`}
+      data-cursor="Ver"
+      class="inline-block text-[11px] font-mono uppercase tracking-wide text-black no-underline border-b border-black pb-1 w-fit hover:opacity-60 transition-opacity"
+    >
+      Ver ficha completa →
+    </a>
+  </div>
+</section>

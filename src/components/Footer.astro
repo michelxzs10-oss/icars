@@ -1,0 +1,47 @@
+---
+// src/components/Footer.astro
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-black mt-24 px-6 py-10">
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-[11px] font-mono uppercase tracking-wide">
+
+    <!-- Logo / descripción corta -->
+    <div class="col-span-2 md:col-span-1">
+      <p class="text-lg font-extrabold tracking-tight normal-case mb-2">iCars</p>
+      <p class="text-gray-500 normal-case leading-relaxed">
+        Archivo visual de modelos, marcas y publicidad automotriz.
+      </p>
+    </div>
+
+    <!-- Navegación -->
+    <div class="flex flex-col gap-1">
+      <span class="text-gray-400 mb-1">Navegación</span>
+      <a href="/" class="text-black no-underline hover:opacity-60 transition-opacity">Home</a>
+      <a href="/marcas" class="text-black no-underline hover:opacity-60 transition-opacity">Marcas</a>
+      <a href="/about" class="text-black no-underline hover:opacity-60 transition-opacity">About</a>
+    </div>
+
+    <!-- Redes -->
+    <div class="flex flex-col gap-1">
+      <span class="text-gray-400 mb-1">Redes</span>
+      <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="text-black no-underline hover:opacity-60 transition-opacity">Instagram</a>
+      <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="text-black no-underline hover:opacity-60 transition-opacity">Twitter / X</a>
+      <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="text-black no-underline hover:opacity-60 transition-opacity">GitHub</a>
+    </div>
+
+    <!-- Aviso legal -->
+    <div class="flex flex-col gap-1">
+      <span class="text-gray-400 mb-1">Aviso</span>
+      <p class="text-gray-500 normal-case leading-relaxed">
+        Proyecto sin fines de lucro. Imágenes con fines educativos/documentales; los derechos pertenecen a sus respectivas marcas.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="mt-10 pt-6 border-t border-gray-200 flex flex-col md:flex-row justify-between gap-2 text-[10px] font-mono text-gray-400 uppercase tracking-wide">
+    <span>© {year} iCars — Todos los derechos reservados</span>
+    <span>Hecho con Astro + Tailwind</span>
+  </div>
+</footer>

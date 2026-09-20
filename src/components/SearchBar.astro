@@ -1,0 +1,92 @@
+---
+import { modelos } from "../data/modelos";
+
+// Solo mandamos al cliente los campos que necesita el buscador
+const modelosBusqueda = modelos.map((m) => ({
+  slug: m.slug,
+  nombre: m.nombre,
+  marca: m.marca,
+  año: m.año,
+  imagen: m.imagenPrincipal,
+}));
+---
+
+<div class="relative max-w-xl mx-auto px-6 py-8">
+  <input
+    id="search-input"
+    type="text"
+    placeholder="Buscar modelo o marca..."
+    autocomplete="off"
+    class="w-full border-b border-black bg-transparent py-2 text-sm font-mono uppercase tracking-wide placeholder:text-gray-400 focus:outline-none"
+  />
+
+  <div
+    id="search-results"
+    class="absolute left-6 right-6 top-full mt-1 bg-white border border-black max-h-80 overflow-y-auto hidden z-50"
+  >
+  </div>
+</div>
+
+<script define:vars={{ modelosBusqueda }}>
+  const input = document.getElementById("search-input");
+  const resultsBox = document.getElementById("search-results");
+
+  function renderResults(items) {
+    if (items.length === 0) {
+      resultsBox.innerHTML = `<p class="px-4 py-3 text-[11px] font-mono uppercase tracking-wide text-gray-400">Sin resultados</p>`;
+      return;
+    }
+
+    resultsBox.innerHTML = items
+      .slice(0, 8)
+      .map(
+        (m) => `
+        <a
+          href="/modelos/${m.slug}"
+          class="flex items-center gap-3 px-4 py-2 hover:bg-black hover:text-white transition-colors text-sm no-underline text-black border-b border-gray-100 last:border-0"
+        >
+          <img src="${m.imagen}" alt="${m.nombre}" class="w-10 h-10 object-cover flex-shrink-0" />
+          <div class="flex flex-col">
+            <span class="font-mono">${m.nombre}</span>
+            <span class="text-[10px] font-mono uppercase tracking-wide opacity-60">${m.marca} — ${m.año}</span>
+          </div>
+        </a>
+      `
+      )
+      .join("");
+  }
+
+  input.addEventListener("input", (e) => {
+    const query = e.target.value.trim().toLowerCase();
+
+    if (query.length === 0) {
+      resultsBox.classList.add("hidden");
+      return;
+    }
+
+    const filtered = modelosBusqueda.filter(
+      (m) =>
+        m.nombre.toLowerCase().includes(query) ||
+        m.marca.toLowerCase().includes(query) ||
+        String(m.año).includes(query)
+    );
+
+    renderResults(filtered);
+    resultsBox.classList.remove("hidden");
+  });
+
+  // Cierra el dropdown al hacer click fuera
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest("#search-input") && !e.target.closest("#search-results")) {
+      resultsBox.classList.add("hidden");
+    }
+  });
+
+  // Cierra con Escape
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      resultsBox.classList.add("hidden");
+      input.blur();
+    }
+  });
+</script>

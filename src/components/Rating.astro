@@ -1,0 +1,102 @@
+---
+// src/components/Rating.astro
+interface Props {
+  slug: string;
+}
+const { slug } = Astro.props;
+---
+
+<div
+  id="rating-widget"
+  data-slug={slug}
+  class="mt-16 pt-12 border-t border-black"
+>
+  <h2 class="text-[11px] font-mono uppercase tracking-wide text-gray-500 mb-4">
+    Confiabilidad
+  </h2>
+
+  <div class="flex items-center gap-4 mb-6">
+    <span id="rating-average" class="text-4xl font-extrabold tracking-tight">—</span>
+    <div class="text-[11px] font-mono uppercase tracking-wide text-gray-500">
+      <span id="rating-count">0 votos</span>
+    </div>
+  </div>
+
+  <div id="rating-stars" class="flex gap-2 mb-2">
+    {[1, 2, 3, 4, 5].map((n) => (
+      <button
+        type="button"
+        class="star-btn text-3xl text-gray-300 hover:text-black transition-colors"
+        data-value={n}
+        aria-label={`Calificar con ${n} estrellas`}
+      >
+        ★
+      </button>
+    ))}
+  </div>
+
+  <p id="rating-message" class="text-[11px] font-mono text-gray-500"></p>
+</div>
+
+<script>
+  import { supabase } from "../lib/supabase";
+
+  const widget = document.getElementById("rating-widget");
+  const slug = widget?.getAttribute("data-slug");
+  const averageEl = document.getElementById("rating-average");
+  const countEl = document.getElementById("rating-count");
+  const messageEl = document.getElementById("rating-message");
+  const starButtons = document.querySelectorAll(".star-btn");
+
+  const votedKey = `voted-${slug}`;
+
+  async function loadRatings() {
+    const { data, error } = await supabase
+      .from("ratings")
+      .select("puntuacion")
+      .eq("modelo_slug", slug);
+
+    if (error || !data) return;
+
+    if (data.length === 0) {
+      averageEl!.textContent = "—";
+      countEl!.textContent = "0 votos";
+      return;
+    }
+
+    const suma = data.reduce((acc, r) => acc + r.puntuacion, 0);
+    const promedio = (suma / data.length).toFixed(1);
+
+    averageEl!.textContent = promedio;
+    countEl!.textContent = `${data.length} voto${data.length !== 1 ? "s" : ""}`;
+  }
+
+  async function submitRating(valor: number) {
+    if (localStorage.getItem(votedKey)) {
+      messageEl!.textContent = "Ya calificaste este modelo desde este dispositivo.";
+      return;
+    }
+
+    const { error } = await supabase
+      .from("ratings")
+      .insert({ modelo_slug: slug, puntuacion: valor });
+
+    if (error) {
+      messageEl!.textContent = "Hubo un error al guardar tu voto.";
+      return;
+    }
+
+    localStorage.setItem(votedKey, String(valor));
+    messageEl!.textContent = "¡Gracias por tu calificación!";
+    loadRatings();
+  }
+
+  starButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const valor = parseInt(btn.getAttribute("data-value") || "0", 10);
+      submitRating(valor);
+    });
+  });
+
+  loadRatings();
+</script>

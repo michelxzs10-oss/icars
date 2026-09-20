@@ -1,0 +1,78 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { modelos } from "../data/modelos";
+
+const totalModelos = modelos.length;
+const totalMarcas = new Set(modelos.map((m) => m.marca)).size;
+---
+
+<Layout title="iCars — About">
+  <div class="px-6 py-12 max-w-3xl mx-auto">
+
+    <!-- Breadcrumb -->
+    <nav class="text-[11px] font-mono uppercase tracking-wide text-gray-500 mb-8">
+      <a href="/" class="hover:text-black transition-colors">Inicio</a>
+      <span class="mx-2">/</span>
+      <span class="text-black">About</span>
+    </nav>
+
+    <h1 class="text-4xl font-extrabold tracking-tight mb-8">
+      About
+    </h1>
+
+    <div class="space-y-6 text-gray-700 leading-relaxed">
+      <p>
+        iCars es un archivo visual y técnico de modelos de autos — desde clásicos
+        de culto hasta hot hatches olvidados — documentados con ficha técnica,
+        fotografías de época y contexto histórico.
+      </p>
+      <p>
+        El objetivo no es ser un catálogo de venta ni una base de datos genérica,
+        sino un espacio de referencia construido modelo por modelo, con la
+        intención de crecer como una wiki: abierta, en expansión constante, y
+        hecha por y para quienes disfrutan la mecánica y la historia detrás de
+        cada auto.
+      </p>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 gap-6 mt-12 pt-8 border-t border-black">
+      <div>
+        <span class="block text-4xl font-extrabold tracking-tight">{totalModelos}</span>
+        <span class="text-[11px] font-mono uppercase tracking-wide text-gray-500">
+          Modelos documentados
+        </span>
+      </div>
+      <div>
+        <span class="block text-4xl font-extrabold tracking-tight">{totalMarcas}</span>
+        <span class="text-[11px] font-mono uppercase tracking-wide text-gray-500">
+          Marcas representadas
+        </span>
+      </div>
+    </div>
+
+    <!-- Stack técnico -->
+    <div class="mt-12 pt-8 border-t border-black">
+      <h2 class="text-[11px] font-mono uppercase tracking-wide text-gray-500 mb-4">
+        Construido con
+      </h2>
+      <ul class="flex flex-wrap gap-3 text-[11px] font-mono uppercase tracking-wide">
+        <li class="border border-black px-3 py-1">Astro</li>
+        <li class="border border-black px-3 py-1">Tailwind CSS</li>
+        <li class="border border-black px-3 py-1">Supabase</li>
+      </ul>
+    </div>
+
+    <!-- Volver -->
+    <div class="mt-16">
+      <a
+        href="/"
+        data-cursor="Volver"
+        class="text-[11px] font-mono uppercase tracking-wide text-black no-underline hover:opacity-60 transition-opacity"
+      >
+        ← Volver al inicio
+      </a>
+    </div>
+
+  </div>
+</Layout>
