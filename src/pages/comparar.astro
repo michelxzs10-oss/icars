@@ -1,0 +1,174 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { modelos } from "../data/modelos";
+
+const modelosOrdenados = [...modelos].sort((a, b) => a.nombre.localeCompare(b.nombre));
+---
+
+<Layout
+  title="iCars — Comparar modelos"
+  description="Compara la ficha técnica, costos de mantenimiento y confiabilidad entre dos modelos de auto lado a lado."
+>
+  <div class="px-6 py-12 max-w-5xl mx-auto">
+
+    <!-- Breadcrumb -->
+    <nav class="text-[11px] font-mono uppercase tracking-wide text-gray-500 mb-8">
+      <a href="/" class="hover:text-black transition-colors">Inicio</a>
+      <span class="mx-2">/</span>
+      <span class="text-black">Comparar</span>
+    </nav>
+
+    <h1 class="text-4xl font-extrabold tracking-tight mb-8">
+      Comparar modelos
+    </h1>
+
+    <!-- Selectores -->
+    <div class="grid md:grid-cols-2 gap-6 mb-12">
+      <div>
+        <label for="select-a" class="block text-[11px] font-mono uppercase tracking-wide text-gray-500 mb-2">
+          Modelo A
+        </label>
+        <select
+          id="select-a"
+          class="w-full border border-black bg-white px-3 py-2 text-sm font-mono uppercase tracking-wide focus:outline-none"
+        >
+          <option value="">— Selecciona un modelo —</option>
+          {modelosOrdenados.map((m) => (
+            <option value={m.slug}>{m.nombre}</option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label for="select-b" class="block text-[11px] font-mono uppercase tracking-wide text-gray-500 mb-2">
+          Modelo B
+        </label>
+        <select
+          id="select-b"
+          class="w-full border border-black bg-white px-3 py-2 text-sm font-mono uppercase tracking-wide focus:outline-none"
+        >
+          <option value="">— Selecciona un modelo —</option>
+          {modelosOrdenados.map((m) => (
+            <option value={m.slug}>{m.nombre}</option>
+          ))}
+        </select>
+      </div>
+    </div>
+
+    <!-- Mensaje cuando falta seleccionar -->
+    <p
+      id="empty-message"
+      class="text-sm text-gray-500 font-mono uppercase tracking-wide"
+    >
+      Selecciona dos modelos para comparar.
+    </p>
+
+    <!-- Tabla de comparación -->
+    <div id="comparison" class="hidden overflow-x-auto">
+      <table class="w-full border-collapse text-sm">
+        <thead>
+          <tr>
+            <th class="text-left font-mono text-[11px] uppercase tracking-wide text-gray-500 pb-4 pr-4 border-b border-black"></th>
+            <th class="text-left pb-4 pr-4 border-b border-black" id="header-a"></th>
+            <th class="text-left pb-4 border-b border-black" id="header-b"></th>
+          </tr>
+        </thead>
+        <tbody id="comparison-body"></tbody>
+      </table>
+    </div>
+
+  </div>
+</Layout>
+
+<script define:vars={{ modelos }}>
+  const selectA = document.getElementById("select-a");
+  const selectB = document.getElementById("select-b");
+  const comparison = document.getElementById("comparison");
+  const emptyMessage = document.getElementById("empty-message");
+  const headerA = document.getElementById("header-a");
+  const headerB = document.getElementById("header-b");
+  const body = document.getElementById("comparison-body");
+
+  const campos = [
+    { key: "marca", label: "Marca" },
+    { key: "año", label: "Año" },
+    { key: "specs.motor", label: "Motor" },
+    { key: "specs.potencia", label: "Potencia" },
+    { key: "specs.torque", label: "Torque" },
+    { key: "specs.transmision", label: "Transmisión" },
+    { key: "specs.traccion", label: "Tracción" },
+    { key: "specs.tipo", label: "Tipo" },
+    { key: "specs.aceleracion", label: "0-100 km/h" },
+    { key: "specs.velocidadMaxima", label: "Vel. máxima" },
+    { key: "specs.costoRefacciones", label: "Refacciones" },
+    { key: "specs.costoMantenimiento", label: "Mantenimiento" },
+  ];
+
+  function getValue(obj, path) {
+    return path.split(".").reduce((acc, key) => (acc ? acc[key] : undefined), obj);
+  }
+
+  function render() {
+    const slugA = selectA.value;
+    const slugB = selectB.value;
+
+    if (!slugA || !slugB) {
+      comparison.classList.add("hidden");
+      emptyMessage.classList.remove("hidden");
+      return;
+    }
+
+    const modeloA = modelos.find((m) => m.slug === slugA);
+    const modeloB = modelos.find((m) => m.slug === slugB);
+
+    if (!modeloA || !modeloB) return;
+
+    headerA.innerHTML = `
+      <div class="flex flex-col gap-2">
+        <img src="${modeloA.imagenPrincipal}" alt="${modeloA.nombre}" class="w-full aspect-video object-cover" />
+        <span class="font-mono text-sm font-bold">${modeloA.nombre}</span>
+      </div>
+    `;
+    headerB.innerHTML = `
+      <div class="flex flex-col gap-2">
+        <img src="${modeloB.imagenPrincipal}" alt="${modeloB.nombre}" class="w-full aspect-video object-cover" />
+        <span class="font-mono text-sm font-bold">${modeloB.nombre}</span>
+      </div>
+    `;
+
+    body.innerHTML = campos
+      .map((campo) => {
+        const valorA = getValue(modeloA, campo.key) ?? "—";
+        const valorB = getValue(modeloB, campo.key) ?? "—";
+
+        return `
+          <tr>
+            <td class="font-mono text-[11px] uppercase tracking-wide text-gray-500 py-3 pr-4 border-b border-gray-200 align-top">${campo.label}</td>
+            <td class="py-3 pr-4 border-b border-gray-200 align-top">${valorA}</td>
+            <td class="py-3 border-b border-gray-200 align-top">${valorB}</td>
+          </tr>
+        `;
+      })
+      .join("");
+
+    comparison.classList.remove("hidden");
+    emptyMessage.classList.add("hidden");
+
+    // Actualiza la URL para que el resultado se pueda compartir
+    const url = new URL(window.location.href);
+    url.searchParams.set("a", slugA);
+    url.searchParams.set("b", slugB);
+    window.history.replaceState({}, "", url);
+  }
+
+  // Lee ?a= y ?b= de la URL al cargar la página
+  const params = new URLSearchParams(window.location.search);
+  const initialA = params.get("a");
+  const initialB = params.get("b");
+  if (initialA) selectA.value = initialA;
+  if (initialB) selectB.value = initialB;
+  if (initialA && initialB) render();
+
+  selectA.addEventListener("change", render);
+  selectB.addEventListener("change", render);
+</script>

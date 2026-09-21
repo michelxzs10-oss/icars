@@ -1,0 +1,138 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+interface Termino {
+  termino: string;
+  definicion: string;
+}
+
+const terminos: Termino[] = [
+  {
+    termino: "4WD / AWD (Tracción integral)",
+    definicion: "Sistema donde el motor envía potencia a las cuatro ruedas en vez de solo dos, mejorando el agarre en curvas o superficies resbalosas. AWD suele ser automático y permanente; 4WD a veces se activa manualmente.",
+  },
+  {
+    termino: "Aspiración natural / Atmosférico",
+    definicion: "Motor que respira aire a presión normal, sin ayuda de turbo ni supercargador. Suele entregar potencia de forma más lineal y predecible, aunque con menos torque a bajas revoluciones que un motor turbo.",
+  },
+  {
+    termino: "Boost (presión de turbo)",
+    definicion: "La presión adicional de aire que el turbocompresor mete al motor para generar más potencia. Se mide en PSI o bar.",
+  },
+  {
+    termino: "Correa de distribución",
+    definicion: "Pieza que sincroniza el movimiento del cigüeñal y los árboles de levas del motor. Requiere cambio preventivo cada cierto kilometraje (varía por modelo) — si se rompe en un motor 'interferente', puede causar daño grave al motor.",
+  },
+  {
+    termino: "CVT (Transmisión variable continua)",
+    definicion: "Transmisión automática sin marchas fijas, que ajusta la relación de forma continua. Suele ser más eficiente en consumo, pero su reparación es notablemente más cara que una automática convencional si falla.",
+  },
+  {
+    termino: "Diferencial autoblocante (LSD)",
+    definicion: "Mecanismo que reparte la fuerza entre las dos ruedas de un mismo eje de forma más pareja, evitando que una rueda 'patine' sola al acelerar fuerte en curva. Común en versiones deportivas (Spec V, GTI, Sport).",
+  },
+  {
+    termino: "DOHC / SOHC",
+    definicion: "Se refiere a cuántos árboles de levas tiene la culata del motor. DOHC (doble árbol) suele permitir más revoluciones y potencia; SOHC (árbol único) es mecánicamente más simple.",
+  },
+  {
+    termino: "DSG",
+    definicion: "Transmisión de doble embrague de Volkswagen/Audi, que cambia de marcha muy rápido casi sin cortar la potencia. Ofrece mejor rendimiento que una automática tradicional, pero su mantenimiento (aceite específico, mecatrónica) es más caro.",
+  },
+  {
+    termino: "FWD (Tracción delantera)",
+    definicion: "El motor envía la potencia únicamente a las ruedas delanteras. Es el layout más común en autos compactos y económicos, generalmente más barato de mantener que RWD o AWD.",
+  },
+  {
+    termino: "Inyección directa",
+    definicion: "El combustible se inyecta directamente en la cámara de combustión (en vez de antes de la válvula de admisión), mejorando eficiencia y potencia. Puede generar acumulación de carbón en las válvulas con el tiempo si no se le da mantenimiento adecuado.",
+  },
+  {
+    termino: "Motor modular",
+    definicion: "Familia de motores V8 de Ford (usada en los Mustang GT de varias generaciones) diseñada para compartir componentes entre distintos modelos, facilitando su mantenimiento y disponibilidad de refacciones.",
+  },
+  {
+    termino: "RWD (Tracción trasera)",
+    definicion: "El motor envía la potencia a las ruedas traseras. Típico en muscle cars y deportivos clásicos; suele ofrecer mejor equilibrio de peso, pero menos agarre en piso mojado que FWD o AWD.",
+  },
+  {
+    termino: "Supercargador",
+    definicion: "Dispositivo que comprime el aire de entrada al motor usando la fuerza mecánica del propio motor (a diferencia del turbo, que usa los gases de escape), entregando potencia extra de forma más inmediata pero con menor eficiencia.",
+  },
+  {
+    termino: "Torque",
+    definicion: "La fuerza de 'jalón' del motor, distinta de la potencia (hp). Un motor con más torque a bajas revoluciones se siente más fuerte al acelerar desde parado o al rebasar sin bajar de marcha.",
+  },
+  {
+    termino: "Turbo / Turbocompresor",
+    definicion: "Dispositivo que usa los gases de escape del motor para comprimir el aire de entrada, aumentando la potencia sin agrandar el motor. Agrega complejidad mecánica y, en varios casos, mayor costo de mantenimiento que un motor atmosférico equivalente.",
+  },
+  {
+    termino: "VTEC",
+    definicion: "Tecnología de Honda que cambia el perfil de las levas según las revoluciones del motor, permitiendo que un mismo motor sea eficiente a bajas RPM y potente a altas RPM. Presente en modelos como el Civic Si.",
+  },
+];
+
+// Agrupa alfabéticamente por primera letra
+const terminosOrdenados = [...terminos].sort((a, b) => a.termino.localeCompare(b.termino));
+const letras = [...new Set(terminosOrdenados.map((t) => t.termino[0].toUpperCase()))];
+---
+
+<Layout
+  title="iCars — Glosario de términos técnicos"
+  description="Glosario de términos automotrices comunes: turbo, VTEC, tracción, transmisión y más, explicados en lenguaje simple."
+>
+  <div class="px-6 py-12 max-w-3xl mx-auto">
+
+    <!-- Breadcrumb -->
+    <nav class="text-[11px] font-mono uppercase tracking-wide text-gray-500 mb-4">
+      <a href="/" class="hover:text-black transition-colors">Inicio</a>
+      <span class="mx-2">/</span>
+      <span class="text-black">Glosario</span>
+    </nav>
+
+    <h1 class="text-4xl font-extrabold tracking-tight mb-4">
+      Glosario
+    </h1>
+    <p class="text-gray-700 leading-relaxed mb-8">
+      Términos técnicos comunes en las fichas de iCars, explicados en lenguaje simple.
+    </p>
+
+    <!-- Anchor links por letra -->
+    <nav class="sticky top-0 bg-white z-10 flex flex-wrap gap-x-3 gap-y-2 py-4 border-y border-black mb-12 text-[11px] font-mono uppercase tracking-wide">
+      {letras.map((letra) => (
+        <a
+          href={`#letra-${letra}`}
+          class="text-black no-underline hover:opacity-60 transition-opacity w-5 text-center"
+        >
+          {letra}
+        </a>
+      ))}
+    </nav>
+
+    <!-- Lista de términos -->
+    <div class="space-y-10">
+      {terminosOrdenados.map((t, i) => {
+        const esNuevaLetra = i === 0 || terminosOrdenados[i - 1].termino[0].toUpperCase() !== t.termino[0].toUpperCase();
+        return (
+          <div id={esNuevaLetra ? `letra-${t.termino[0].toUpperCase()}` : undefined} class="scroll-mt-24">
+            <dt class="font-mono text-base font-bold mb-1">{t.termino}</dt>
+            <dd class="text-gray-700 leading-relaxed">{t.definicion}</dd>
+          </div>
+        );
+      })}
+    </div>
+
+    <!-- Volver -->
+    <div class="mt-16 pt-8 border-t border-black">
+      <a
+        href="/"
+        data-cursor="Volver"
+        class="text-[11px] font-mono uppercase tracking-wide text-black no-underline hover:opacity-60 transition-opacity"
+      >
+        ← Volver al inicio
+      </a>
+    </div>
+
+  </div>
+</Layout>
